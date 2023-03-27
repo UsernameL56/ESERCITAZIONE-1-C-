@@ -5,12 +5,13 @@ using namespace std;
 
 int main()
 {
-    string stringa;
+    char r;
     int scelta;
+    string dolce;
     bool c = false;
     do {
         system("CLS");              // equivalente Console.Clear()
-        cout << "1 - Tiramisu'\n2 - Torta alle mele\n3 - Zuppa inglese\n4 - Pastiera napoletana\n5 - Putizza\n6 - Pandoro\n7 - Panforte\n8 - Panna cotta\n9 - Crostata di fragole\n10 - Strudel\n0 - Uscita\n";
+        cout << "1 - Stampa lista\n2 - Scegli dolce\n3 - Aggiungi dolce\n4 - Cancella dolce\n0 - Uscita\n" << endl;
         cout << "Inserire la scelta: ";
         cin >> scelta;
         switch (scelta) {
@@ -21,11 +22,27 @@ int main()
             c = true;
             break;
         case 1:
-            cout << "siu";
+            system("CLS");
+            cout << "- Tiramisu'\n- Torta alle mele\n- Zuppa inglese\n- Pastiera napoletana\n- Putizza\n- Pandoro\n- Panforte\n- Panna cotta\n- Crostata di fragole\n- Strudel\n";
+            break;
+        case 2:
+            cout << "Inserire il dolce che si vuole selezionare: ";
+            cin >> dolce;
+            Aggiunta(dolce);
+            //Ricerca(dolce);
             break;
         }
-        cout << "Premere un tasto per continuare: ";
-        cin.ignore(flush);
+        cout << "Premere un tasto per continuare... ";
+        cin >> r;
     } while (!c);
+}
+static int Ricerca(string d) {
+    int ps = -1;
+    ifstream fin("ListaDolci.csv");
 
+}
+static void Aggiunta(string d) {
+    ofstream fout("Carrello.csv", ios::app);
+    fout << d + "1" << endl;
+    fout.close();
 }
