@@ -8,6 +8,7 @@ int main()
     char r;
     int scelta;
     string dolce;
+    string DolceFile;
     bool c = false;
     do {
         system("CLS");              // equivalente Console.Clear()
@@ -31,6 +32,13 @@ int main()
             Aggiunta(dolce);
             //Ricerca(dolce);
             break;
+        case 3:
+            cout << "Inserire il dolce da aggiungere alla lista: ";
+            cin >> DolceFile;
+            AggiuntaMenu(DolceFile);
+            break;
+
+
         }
         cout << "Premere un tasto per continuare... ";
         cin >> r;
@@ -43,6 +51,16 @@ static int Ricerca(string d) {
 }
 static void Aggiunta(string d) {
     ofstream fout("Carrello.csv", ios::app);
-    fout << d + "1" << endl;
+    if (fout.is_open()) {
+        fout << d + "1" << endl;
+    }
     fout.close();
+}
+
+    static void AggiuntaMenu(string DolceFile) {
+    ofstream file("ListaDolci.csv", ios::app);
+    if (file.is_open()) {
+        file << "1 - " << DolceFile << endl;
+    }
+    file.close();
 }
