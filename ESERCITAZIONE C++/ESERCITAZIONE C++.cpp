@@ -104,7 +104,7 @@ int main()
             break;
         case 1:
             system("CLS");
-            cout << "- Tiramisu'\n- Torta alle mele\n- Zuppa inglese\n- Pastiera napoletana\n- Putizza\n- Pandoro\n- Panforte\n- Panna cotta\n- Crostata di fragole\n- Strudel\n";
+            cout << "- Tiramisu'\n- Torta alle mele\n- Zuppa inglese\n- Brownies\n- Torta al cioccolato\n- Torta al limone\n- Pastiera napoletana\n- Panna cotta\n- Crostata di fragole\n- Strudel\n";
             cout << "Inserire il dolce che si vuole selezionare: ";
             cin >> dolce;
             Aggiunta(dolce);
