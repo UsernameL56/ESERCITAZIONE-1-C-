@@ -17,12 +17,22 @@ static void Aggiunta(string d) {
     fout.close();
 }
 
-static void AggiuntaMenu(string DolceFile, int& indice)
+static void AggiuntaMenu(string DolceFile, int indice)
 {
-    indice++;
+    
     fstream file;
+    char exit='e';
     file.open("ListaDolci.csv", ios::out | ios::app);
-    file << indice << ";" << DolceFile << endl;
+    do {
+        cout << "Inserire il numero del dolce: ";
+        cin >> indice;
+        cout << "Inserire il dolce da aggiungere alla lista: ";
+        cin >> DolceFile;
+        file << indice << ";" << DolceFile << endl;
+        cout << "Inserire un altro dolce?";
+        cin >> exit;
+    } while (exit != 'e');
+    
     file.close();
     
 }
@@ -35,7 +45,7 @@ static void Ricetta()
 
     ifstream ricetta;
     ricetta.open("Ricetta.csv", ios::out);
-    getline("Ricetta.csv", line);
+    //getline("Ricetta.csv", line);
 }
 /*
 void GeneraDispensa()
@@ -104,24 +114,24 @@ int main()
             break;
         case 1:
             system("CLS");
-            cout << "- Tiramisu'\n- Torta alle mele\n- Zuppa inglese\n- Brownies\n- Torta al cioccolato\n- Torta al limone\n- Pastiera napoletana\n- Panna cotta\n- Crostata di fragole\n- Strudel\n";
+            cout << "- Tiramisu'\n- Torta alle mele\n- Zuppa inglese\n- Brownies\n- Torta al cioccolato\n- Torta al limone\n- Pastiera napoletana\n- Panna cotta\n- Crostata di fragole\n- Strudel di pere e cioccolato\n";
             cout << "Inserire il dolce che si vuole selezionare: ";
             cin >> dolce;
             Aggiunta(dolce);
+
+            cout << "Premere un tasto per continuare...";
+            cin >> r;
+
             break;
         case 2:
             
             //Ricerca(dolce);
             break;
         case 3:
-            cout << "Inserire il dolce da aggiungere alla lista: ";
-            cin >> DolceFile;
             AggiuntaMenu(DolceFile, indice);
             break;
 
-
         }
-        cout << "Premere un tasto per continuare...";
-        cin >> r;
+        
     } while (!c);
 }
