@@ -21,7 +21,7 @@ static void AggiuntaMenu(string DolceFile, int indice)
 {
     
     fstream file;
-    char exit='e';
+    char exit='N';
     file.open("ListaDolci.csv", ios::out | ios::app);
     do {
         cout << "Inserire il numero del dolce: ";
@@ -29,23 +29,36 @@ static void AggiuntaMenu(string DolceFile, int indice)
         cout << "Inserire il dolce da aggiungere alla lista: ";
         cin >> DolceFile;
         file << indice << ";" << DolceFile << endl;
-        cout << "Inserire un altro dolce?";
+        cout << "Inserire un altro dolce? (Y/N) ";
         cin >> exit;
-    } while (exit != 'e');
-    
+        exit = (exit | ' ') - ' ';
+       
+    } while (exit != 'N');
     file.close();
     
 }
 
-static void Ricetta() 
+static void Ricetta(string input) 
 {
     string line;
     ifstream file;
-    file.open("ListaDolci.csv", ios::in | ios::app);
+    file.open("Ricette.csv", ios::in | ios::app);
 
     ifstream ricetta;
     ricetta.open("Ricetta.csv", ios::out);
-    //getline("Ricetta.csv", line);
+    if (ricetta.is_open())
+    {
+        while (getline(ricetta, line))
+        {
+            cout << line << '\n';
+            if (line == "!")
+            {
+                break;
+            }
+        }
+        ricetta.close();
+        file.close();
+    }
 }
 /*
 void GeneraDispensa()
@@ -102,7 +115,7 @@ int main()
     bool c = false;
     do {
         system("CLS");              // equivalente Console.Clear()
-        cout << "1 - Scegli Dolce\n2 - \n3 - Aggiungi dolce al menu\n4 - Cancella dolce\n0 - Uscita\n" << endl;
+        cout << "1 - Scegli Dolce\n2 - Scegli Dolce\n3 - Aggiungi dolce al menu\n4 - Cancella dolce\n0 - Uscita\n" << endl;
         cout << "Inserire la scelta: ";
         cin >> scelta;
         switch (scelta) {
@@ -118,20 +131,18 @@ int main()
             cout << "Inserire il dolce che si vuole selezionare: ";
             cin >> dolce;
             Aggiunta(dolce);
-
-            cout << "Premere un tasto per continuare...";
-            cin >> r;
-
             break;
         case 2:
-            
-            //Ricerca(dolce);
+            cout << "gg";
+            cin >> dolce;
+            Ricetta(dolce);
             break;
         case 3:
             AggiuntaMenu(DolceFile, indice);
             break;
 
         }
-        
+        cout << "Premere un tasto per continuare...";
+        cin >> r;
     } while (!c);
 }
