@@ -6,20 +6,35 @@
 using namespace std;
 
 #pragma region Funzioni
-static int Ricerca(string d) {
-    int ps = -1;
-    ifstream fin("ListaDolci.csv");
-
+static int Ricerca(string nome, string filePath)
+{
+    int posizione = -1;
+    ifstream file(filePath);
+    string line;
+    int riga = 0;
+    while (getline(file, line))
+    {
+        riga++;
+        size_t pos = line.find(';');
+        string name = line.substr(0, pos);
+        if (name == nome)
+        {
+            posizione = riga;
+            break;
+        }
+    }
+    file.close();
+    return posizione;
 }
-static void Aggiunta(string d) {
-    ofstream fout("Carrello.csv", ios::out | ios::app);
-    fout << d + " 1;" << endl;
-    fout.close();
+static void Aggiunta(string nome, string ingrediente, string filePath)
+{
+    ofstream file(filePath, ios::app);
+    file << nome << ";" << ingrediente << ";1" << endl;
+    file.close();
 }
 
 static void AggiuntaMenu(string DolceFile, int indice)
 {
-    
     fstream file;
     char exit='N';
     file.open("ListaDolci.csv", ios::out | ios::app);
@@ -107,15 +122,23 @@ void GeneraDispensa()
 
 int main()
 {
+    struct prodotto
+    {
+        string dolce;
+        string ingrediente;
+        int quantità;
+    };
+    prodotto p[100];
     char r;
-    int scelta;
-    string dolce;
+    int scelta, dim = 0, q;
+    string path = "ListaProdotti.csv";
+    string d, in;
     string DolceFile;
     int indice = 1;
     bool c = false;
     do {
         system("CLS");              // equivalente Console.Clear()
-        cout << "1 - Scegli Dolce\n2 - Scegli Dolce\n3 - Aggiungi dolce al menu\n4 - Cancella dolce\n0 - Uscita\n" << endl;
+        cout << "1 - Aggiunta dolce\n2 - Modifica dolce\n3 - Elimina dolce\n4 - Ricerca ricetta\n0 - Uscita\n" << endl;
         cout << "Inserire la scelta: ";
         cin >> scelta;
         switch (scelta) {
@@ -127,20 +150,50 @@ int main()
             break;
         case 1:
             system("CLS");
-            cout << "- Tiramisu'\n- Torta alle mele\n- Zuppa inglese\n- Brownies\n- Torta al cioccolato\n- Torta al limone\n- Pastiera napoletana\n- Panna cotta\n- Crostata di fragole\n- Strudel di pere e cioccolato\n";
-            cout << "Inserire il dolce che si vuole selezionare: ";
-            cin >> dolce;
-            Aggiunta(dolce);
+            cout << "Inserire il dolce: ";
+            cin >> d;
+            cout << "Inserire il numero di ingredienti necessari: ";
+            cin >> q;
+            for (int i = 1; i <= q; i++) {
+                cout << "Inserire l'ingrediente " << i << ": ";
+                cin >> in;
+            }
+            if (dim < 100)
+            {
+                bool esist = false;
+                int ps = 0;
+                for (int i = 0; i < dim; i++)
+                {
+                    if (d == p[i].dolce)
+                    {
+                        esist = true;
+                        ps = i;
+                    }
+                }
+                if (!esist)
+                {
+                    p[dim].dolce = d;
+                    p[dim].ingrediente = in;
+                    p[dim].quantità = 1;
+                    dim++;
+                }
+                else
+                {
+                    p[ps].quantità++;
+                }
+            }
+            else
+            {
+                cout << "Array pieno!, Errore!" << endl;
+            }
+
             break;
         case 2:
-            cout << "gg";
-            cin >> dolce;
-            Ricetta(dolce);
+            cout << "gg";            
             break;
         case 3:
             AggiuntaMenu(DolceFile, indice);
             break;
-
         }
         cout << "Premere un tasto per continuare...";
         cin >> r;

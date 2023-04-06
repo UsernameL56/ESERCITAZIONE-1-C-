@@ -129,6 +129,9 @@
   <ItemGroup>
     <ClCompile Include="ESERCITAZIONE C++.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ESERCITAZIONE C++.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
