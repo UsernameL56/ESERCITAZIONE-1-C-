@@ -33,12 +33,6 @@ static int Ricerca(string nome, string filePath)
     file.close();
     return posizione;
 }
-static void Aggiunta(string nome, string ingrediente, string filePath)
-{
-    ofstream file(filePath, ios::app);
-    file << nome << ";" << ingrediente << ";1" << endl;
-    file.close();
-}
 
 static void AggiuntaMenu(int dim, string path)
 {
@@ -61,32 +55,37 @@ static void AggiuntaMenu(int dim, string path)
     }
     file << endl;
     file.close();
+
     dim++;
     
 }
 
-static void Ricetta(string input) 
+static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
 {
     string line;
-    ifstream file;
-    file.open("Ricette.csv", ios::in | ios::app);
-
-    ifstream ricetta;
-    ricetta.open("Ricetta.csv", ios::out);
-    if (ricetta.is_open())
+    fstream reader;
+    reader.open("RicettarioGenerale.csv", ios::in);
+    while (getline(reader, line))
     {
-        while (getline(ricetta, line))
+        if (line.find(dolceOrdinato) != string::npos)
         {
-            cout << line << '\n';
-            if (line == "!")
+            ricetteOrdini << line << endl;
+            while (getline(reader, line))
             {
-                break;
+                if (line.find(";") != string::npos) {
+                    ricetteOrdini << line << endl;
+                    ricetteOrdini << endl;
+                    break;
+                }
+                else {
+                    ricetteOrdini << line << endl;
+                }
             }
         }
-        ricetta.close();
-        file.close();
     }
+    reader.close();
 }
+
 /*
 void GeneraDispensa()
 {
@@ -140,11 +139,13 @@ int main()
     int scelta;
     int dim = 0;
     string path = "ListaDolci.csv";
-    string d;
-    string DolceFile;
+    string ord = "RicetteOrdine.csv";
+    string dolceOrdinato;
     int indice = 1;
     bool c = false;
-    
+    fstream ricetteOrdini;
+    fstream ordini;
+
     do {
         system("CLS");              // equivalente Console.Clear()
         cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Ricerca ricetta\n5 - Modifica dolce\n0 - Uscita\n" << endl;
@@ -192,7 +193,12 @@ int main()
             */
             break;
         case 2:
-            cout << "gg";            
+            cout << "Inserire il dolce che si vuole ordinare: ";
+            cin >> dolceOrdinato;
+            remove("RicetteOrdine.csv");
+            ricetteOrdini.open(ord, ios::out | ios::app);
+            Ordinazione(dolceOrdinato, ricetteOrdini);
+            ricetteOrdini.close();
             break;
         case 3:
             break;
