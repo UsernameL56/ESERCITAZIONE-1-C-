@@ -2,8 +2,15 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string>
+#include <conio.h>
 
 using namespace std;
+struct prodotto
+{
+    string dolce;
+    string ingrediente[100];
+    int quantità;
+};
 
 #pragma region Funzioni
 static int Ricerca(string nome, string filePath)
@@ -33,23 +40,28 @@ static void Aggiunta(string nome, string ingrediente, string filePath)
     file.close();
 }
 
-static void AggiuntaMenu(string DolceFile, int indice)
+static void AggiuntaMenu(int dim, string path)
 {
     fstream file;
-    char exit='N';
-    file.open("ListaDolci.csv", ios::out | ios::app);
-    do {
-        cout << "Inserire il numero del dolce: ";
-        cin >> indice;
-        cout << "Inserire il dolce da aggiungere alla lista: ";
-        cin >> DolceFile;
-        file << indice << ";" << DolceFile << endl;
-        cout << "Inserire un altro dolce? (Y/N) ";
-        cin >> exit;
-        exit = (exit | ' ') - ' ';
-       
-    } while (exit != 'N');
+    int q;
+    prodotto p;
+    cout << "Inserire il dolce: ";
+    cin >> p.dolce;
+    cout << "Inserire il numero di ingredienti necessari: ";
+    cin >> q;
+    for (int i = 1; i <= q; i++) {
+        cout << "Inserire l'ingrediente " << i << ": ";
+        cin >> p.ingrediente[i - 1];
+    }
+    file.open(path, ios::out | ios::app);
+    file << p.dolce;
+    for (int i = 1; i <= q; i++)
+    {
+        file << ";" << p.ingrediente[i - 1];
+    }
+    file << endl;
     file.close();
+    dim++;
     
 }
 
@@ -120,25 +132,22 @@ void GeneraDispensa()
 */
 #pragma endregion
 
+
 int main()
 {
-    struct prodotto
-    {
-        string dolce;
-        string ingrediente;
-        int quantità;
-    };
-    prodotto p[100];
-    char r;
-    int scelta, dim = 0, q;
-    string path = "ListaProdotti.csv";
-    string d, in;
+    
+    prodotto p;
+    int scelta;
+    int dim = 0;
+    string path = "ListaDolci.csv";
+    string d;
     string DolceFile;
     int indice = 1;
     bool c = false;
+    
     do {
         system("CLS");              // equivalente Console.Clear()
-        cout << "1 - Aggiunta dolce\n2 - Modifica dolce\n3 - Elimina dolce\n4 - Ricerca ricetta\n0 - Uscita\n" << endl;
+        cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Ricerca ricetta\n5 - Modifica dolce\n0 - Uscita\n" << endl;
         cout << "Inserire la scelta: ";
         cin >> scelta;
         switch (scelta) {
@@ -150,14 +159,8 @@ int main()
             break;
         case 1:
             system("CLS");
-            cout << "Inserire il dolce: ";
-            cin >> d;
-            cout << "Inserire il numero di ingredienti necessari: ";
-            cin >> q;
-            for (int i = 1; i <= q; i++) {
-                cout << "Inserire l'ingrediente " << i << ": ";
-                cin >> in;
-            }
+            AggiuntaMenu(dim, path);
+            /*
             if (dim < 100)
             {
                 bool esist = false;
@@ -186,16 +189,15 @@ int main()
             {
                 cout << "Array pieno!, Errore!" << endl;
             }
-
+            */
             break;
         case 2:
             cout << "gg";            
             break;
         case 3:
-            AggiuntaMenu(DolceFile, indice);
             break;
         }
         cout << "Premere un tasto per continuare...";
-        cin >> r;
+        _getch();
     } while (!c);
 }
