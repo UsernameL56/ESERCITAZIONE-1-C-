@@ -92,7 +92,6 @@ void GeneraDispensa()
     fstream sr;
     sr.open("", ios::out);
     srand(time(NULL));
-
     //generazione degli elementi
     sr << "uova: " << rand() % 10 << " pezzi" << endl;
     sr << "farina: " << rand() % 2500 << "g" << endl;
@@ -137,6 +136,7 @@ int main()
     
     prodotto p;
     int scelta;
+    char exit = 'N';
     int dim = 0;
     string path = "ListaDolci.csv";
     string ord = "RicetteOrdine.csv";
@@ -193,12 +193,21 @@ int main()
             */
             break;
         case 2:
-            cout << "Inserire il dolce che si vuole ordinare: ";
-            cin >> dolceOrdinato;
             remove("RicetteOrdine.csv");
-            ricetteOrdini.open(ord, ios::out | ios::app);
-            Ordinazione(dolceOrdinato, ricetteOrdini);
-            ricetteOrdini.close();
+            do
+            {
+                system("CLS");
+                cout << "Menu: \n- Tiramisu \n- Torta-alle-mele \n- Zuppa-inglese \n- Brownies \n- Torta-al-cioccolato \n- Torta-al-limone \n- Pastiera-napoletana \n- Panna-cotta \n- Crostata-di-fragole \n- Strudel-di-pere-e-cioccolato" << endl;
+                cout << "Inserire il dolce che si vuole ordinare: ";
+                cin >> dolceOrdinato;
+                ricetteOrdini.open(ord, ios::out | ios::app);
+                Ordinazione(dolceOrdinato, ricetteOrdini);
+                ricetteOrdini.close();
+                indice++;
+                cout << "Inserire un altro dolce? (Y/N) ";
+                cin >> exit;
+                exit = (exit | ' ') - ' ';
+            } while (exit != 'N');
             break;
         case 3:
             break;
