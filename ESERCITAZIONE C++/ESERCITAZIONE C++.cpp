@@ -9,7 +9,7 @@ struct prodotto
 {
     string dolce;
     string ingrediente[100];
-    int quantità;
+    int quantità[100];
 };
 
 #pragma region Funzioni
@@ -34,30 +34,47 @@ static int Ricerca(string nome, string filePath)
     return posizione;
 }
 
-static void AggiuntaMenu(int dim, string path)
+static void AggiuntaMenu(int &dim, string path)
 {
+    
     fstream file;
     int q;
     prodotto p;
-    cout << "Inserire il dolce: ";
-    cin >> p.dolce;
-    cout << "Inserire il numero di ingredienti necessari: ";
-    cin >> q;
-    for (int i = 1; i <= q; i++) {
-        cout << "Inserire l'ingrediente " << i << ": ";
-        cin >> p.ingrediente[i - 1];
-    }
-    file.open(path, ios::out | ios::app);
-    file << p.dolce;
-    for (int i = 1; i <= q; i++)
+    fstream dispensa;
+    if (dim < 100)
     {
-        file << ";" << p.ingrediente[i - 1];
-    }
-    file << endl;
-    file.close();
+        cout << "Inserire il dolce: ";
+        cin >> p.dolce;
+        cout << "Inserire il numero di ingredienti necessari: ";
+        cin >> q;
+        for (int i = 1; i <= q; i++) {
+            cout << "Inserire l'ingrediente " << i << ": ";
+            cin >> p.ingrediente[i - 1];
+            cout << "Inserire la quantita di quell'ingrediente: ";
+            cin >> p.quantità[i - 1];
+            
+           
+        }
+        dispensa.open("Dispensa.csv", ios::out | ios::app);
+        for (int i = 1; i <= q; i++)
+        {
+            dispensa << p.ingrediente[i - 1] << ";" << "..." << endl;
+        }
 
-    dim++;
-    
+        file.open(path, ios::out | ios::app);
+        file << p.dolce;
+        for (int i = 1; i <= q; i++)
+        {
+            file << ";" << p.ingrediente[i - 1] << " " << p.quantità[i - 1];
+        }
+        file << endl;
+        file.close();
+
+        dim++;
+    }
+    else {
+        cout << "Errore! Limite massimo raggiunto" << endl;
+    }
 }
 
 static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
@@ -153,7 +170,7 @@ int main()
         cin >> scelta;
         switch (scelta) {
         default:
-            cout << "Opzione non valida!";
+            cout << "Opzione non valida!"<<endl;
             break;
         case 0:
             c = true;
