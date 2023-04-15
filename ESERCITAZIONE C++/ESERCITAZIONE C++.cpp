@@ -102,6 +102,31 @@ static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
     }
     reader.close();
 }
+static void RicavaMenu() {
+    string line;
+    string sep = ";";
+    fstream reader;
+    reader.open("Ingredienti Temp.txt", ios::in);
+    while (getline(reader, line))
+    {
+        string split = line.substr(0, line.find(sep));
+        cout << "- " << split << endl;
+    }
+    reader.close();
+}
+
+static void StampaProcedimento() {
+    string line;
+    string sep = ";";
+    fstream reader;
+    reader.open("RicetteOrdine.csv", ios::in);
+    while (getline(reader, line))
+    {
+        cout << line << endl <<endl;
+        _getch();
+    }
+    reader.close();
+}
 
 /*
 void GeneraDispensa()
@@ -162,6 +187,7 @@ int main()
     bool c = false;
     fstream ricetteOrdini;
     fstream ordini;
+    fstream ricavazione;
 
     do {
         system("CLS");              // equivalente Console.Clear()
@@ -214,17 +240,21 @@ int main()
             do
             {
                 system("CLS");
-                cout << "Menu: \n- Tiramisu \n- Torta-alle-mele \n- Zuppa-inglese \n- Brownies \n- Torta-al-cioccolato \n- Torta-al-limone \n- Pastiera-napoletana \n- Panna-cotta \n- Crostata-di-fragole \n- Strudel-di-pere-e-cioccolato" << endl;
+                RicavaMenu();
                 cout << "Inserire il dolce che si vuole ordinare: ";
                 cin >> dolceOrdinato;
                 ricetteOrdini.open(ord, ios::out | ios::app);
                 Ordinazione(dolceOrdinato, ricetteOrdini);
                 ricetteOrdini.close();
                 indice++;
+                system("CLS");
+                cout << "Procedimenti: " << endl;
+                StampaProcedimento();
                 cout << "Inserire un altro dolce? (Y/N) ";
                 cin >> exit;
                 exit = (exit | ' ') - ' ';
             } while (exit != 'N');
+
             break;
         case 3:
             break;
