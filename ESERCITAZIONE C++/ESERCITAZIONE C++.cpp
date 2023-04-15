@@ -22,7 +22,7 @@ static int Ricerca(string nome, string filePath)
     while (getline(file, line))
     {
         riga++;
-        size_t pos = line.find(';');
+        int pos = line.find(';');
         string name = line.substr(0, pos);
         if (name == nome)
         {
@@ -107,7 +107,7 @@ static void RicavaMenu() {
     string line;
     string sep = ";";
     fstream reader;
-    reader.open("Ingredienti Temp.txt", ios::in);
+    reader.open("Ingredienti.csv", ios::in);
     while (getline(reader, line))
     {
         string split = line.substr(0, line.find(sep));
@@ -116,50 +116,57 @@ static void RicavaMenu() {
     reader.close();
 }
 
-static void StampaProcedimento(string dolceOrdinato) {
-    string line;
-    string sep = ";";
+static void StampaProcedimento(string dolceOrdinato) 
+{
+    string line, sep = ";", ingpath = "Ingredienti.csv", ricpath = "RicetteOrdine.csv";
     fstream reader, readering;
-    cout << "Ingredienti:" << endl << endl;
-    readering.open("Ingredienti.csv", ios::in);
-    while (getline(readering, line))
-    {
-        if (line.find(dolceOrdinato) != string::npos)
-        {
-            int inizio = line.find(";"); // Trova il primo carattere ";" nella riga
-            while (inizio != string::npos)
-            {
-                int fine = line.find(";", inizio + 1); // Trova il prossimo carattere ";" nella riga
-                string sottostringa = line.substr(inizio + 1, fine - inizio - 1); // Estrae la sottostringa tra i due caratteri ";"
-                cout << sottostringa << endl;
-                inizio = fine;
-            }
-        }
+    int p = Ricerca(dolceOrdinato, ingpath);
+    if (p == -1) {
+        cout << "Errore! Dolce non trovato!" << endl;
     }
-    _getch();
-    system("CLS");
-    readering.close();
-    cout << "Procedimento:" << endl << endl;
-    reader.open("RicetteOrdine.csv", ios::in);
-    while (getline(reader, line))
+    else
     {
-        if (line.find(dolceOrdinato) != string::npos)
+        cout << "Ingredienti:" << endl << endl;
+        readering.open(ingpath, ios::in);
+        while (getline(readering, line))
         {
-            
-            while (getline(reader, line))
+            if (line.find(dolceOrdinato) != string::npos)
             {
-                if (line.find(";") != string::npos) {
-                    cout << line << endl;
-                    break;
-                }
-                else {
-                    cout << line << endl;
+                int inizio = line.find(";"); // Trova il primo carattere ";" nella riga
+                while (inizio != string::npos)
+                {
+                    int fine = line.find(";", inizio + 1); // Trova il prossimo carattere ";" nella riga
+                    string sottostringa = line.substr(inizio + 1, fine - inizio - 1); // Estrae la sottostringa tra i due caratteri ";"
+                    cout << sottostringa << endl;
+                    inizio = fine;
                 }
             }
         }
+        _getch();
+        system("CLS");
+        readering.close();
+        cout << "Procedimento:" << endl << endl;
+        reader.open("RicetteOrdine.csv", ios::in);
+        while (getline(reader, line))
+        {
+            if (line.find(dolceOrdinato) != string::npos)
+            {
+
+                while (getline(reader, line))
+                {
+                    if (line.find(";") != string::npos) {
+                        cout << line << endl;
+                        break;
+                    }
+                    else {
+                        cout << line << endl;
+                    }
+                }
+            }
+        }
+        _getch();
+        reader.close();
     }
-    _getch();
-    reader.close();
 }
 
 /*
@@ -214,14 +221,10 @@ int main()
     int scelta, dim = 0, indice = 1;
     char sceltagg;
     bool exit, c = false;
-    string path = "ListaDolci.csv";
-    string ord = "RicetteOrdine.csv";
-    string dolceOrdinato;
-    fstream ricetteOrdini;
-    fstream ordini;
-    fstream ricavazione;
+    string path = "ListaDolci.csv", ord = "RicetteOrdine.csv", dolceOrdinato;
+    fstream ricetteOrdini, ordini, ricavazione;
     do {
-        system("CLS");              // equivalente Console.Clear()
+        system("CLS");
         cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Ricerca ricetta\n5 - Modifica dolce\n0 - Uscita\n" << endl;
         cout << "Inserire la scelta: ";
         cin >> scelta;
