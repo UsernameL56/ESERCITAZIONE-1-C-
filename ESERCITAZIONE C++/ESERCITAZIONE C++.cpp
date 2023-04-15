@@ -119,14 +119,33 @@ static void RicavaMenu() {
 static void StampaProcedimento(string dolceOrdinato) {
     string line;
     string sep = ";";
-    fstream reader;
+    fstream reader, readering;
+    cout << "Ingredienti:" << endl << endl;
+    readering.open("Ingredienti.csv", ios::in);
+    while (getline(readering, line))
+    {
+        if (line.find(dolceOrdinato) != string::npos)
+        {
+            int inizio = line.find(";"); // Trova il primo carattere ";" nella riga
+            while (inizio != string::npos)
+            {
+                int fine = line.find(";", inizio + 1); // Trova il prossimo carattere ";" nella riga
+                string sottostringa = line.substr(inizio + 1, fine - inizio - 1); // Estrae la sottostringa tra i due caratteri ";"
+                cout << sottostringa << endl;
+                inizio = fine;
+            }
+        }
+    }
+    _getch();
+    system("CLS");
+    readering.close();
+    cout << "Procedimento:" << endl << endl;
     reader.open("RicetteOrdine.csv", ios::in);
     while (getline(reader, line))
     {
         if (line.find(dolceOrdinato) != string::npos)
         {
-            cout << line << endl << endl;
-            _getch();
+            
             while (getline(reader, line))
             {
                 if (line.find(";") != string::npos) {
@@ -135,11 +154,11 @@ static void StampaProcedimento(string dolceOrdinato) {
                 }
                 else {
                     cout << line << endl;
-                    _getch();
                 }
             }
         }
     }
+    _getch();
     reader.close();
 }
 
@@ -192,18 +211,15 @@ int main()
 {
     
     prodotto p;
-    int scelta;
-    char exit = 'N';
-    int dim = 0;
+    int scelta, dim = 0, indice = 1;
+    char sceltagg;
+    bool exit, c = false;
     string path = "ListaDolci.csv";
     string ord = "RicetteOrdine.csv";
     string dolceOrdinato;
-    int indice = 1;
-    bool c = false;
     fstream ricetteOrdini;
     fstream ordini;
     fstream ricavazione;
-
     do {
         system("CLS");              // equivalente Console.Clear()
         cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Ricerca ricetta\n5 - Modifica dolce\n0 - Uscita\n" << endl;
@@ -219,36 +235,6 @@ int main()
         case 1:
             system("CLS");
             AggiuntaMenu(dim, path);
-            /*
-            if (dim < 100)
-            {
-                bool esist = false;
-                int ps = 0;
-                for (int i = 0; i < dim; i++)
-                {
-                    if (d == p[i].dolce)
-                    {
-                        esist = true;
-                        ps = i;
-                    }
-                }
-                if (!esist)
-                {
-                    p[dim].dolce = d;
-                    p[dim].ingrediente = in;
-                    p[dim].quantità = 1;
-                    dim++;
-                }
-                else
-                {
-                    p[ps].quantità++;
-                }
-            }
-            else
-            {
-                cout << "Array pieno!, Errore!" << endl;
-            }
-            */
             break;
         case 2:
             remove("RicetteOrdine.csv");
@@ -263,13 +249,23 @@ int main()
                 ricetteOrdini.close();
                 indice++;
                 system("CLS");
-                cout << "Procedimenti: " << endl;
                 StampaProcedimento(dolceOrdinato);
                 cout << "Inserire un altro dolce? (Y/N) ";
-                cin >> exit;
-                exit = (exit | ' ') - ' ';
-            } while (exit != 'N');
-
+                cin >> sceltagg;
+                sceltagg = (sceltagg | ' ') - ' ';
+                switch (sceltagg) {
+                default:
+                    cout << "Input non valido!" << endl;
+                    exit = false;
+                    break;
+                case 'Y':
+                    exit = true;
+                    break;
+                case 'N':
+                    exit = false;
+                    break;
+                }
+            } while (exit == true);
             break;
         case 3:
             break;
