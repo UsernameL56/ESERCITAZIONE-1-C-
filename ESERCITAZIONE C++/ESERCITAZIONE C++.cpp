@@ -92,6 +92,7 @@ static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
                 if (line.find(";") != string::npos) {
                     ricetteOrdini << line << endl;
                     ricetteOrdini << endl;
+                    reader.close();
                     break;
                 }
                 else {
@@ -100,7 +101,7 @@ static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
             }
         }
     }
-    reader.close();
+    
 }
 static void RicavaMenu() {
     string line;
@@ -115,15 +116,29 @@ static void RicavaMenu() {
     reader.close();
 }
 
-static void StampaProcedimento() {
+static void StampaProcedimento(string dolceOrdinato) {
     string line;
     string sep = ";";
     fstream reader;
     reader.open("RicetteOrdine.csv", ios::in);
     while (getline(reader, line))
     {
-        cout << line << endl <<endl;
-        _getch();
+        if (line.find(dolceOrdinato) != string::npos)
+        {
+            cout << line << endl << endl;
+            _getch();
+            while (getline(reader, line))
+            {
+                if (line.find(";") != string::npos) {
+                    cout << line << endl;
+                    break;
+                }
+                else {
+                    cout << line << endl;
+                    _getch();
+                }
+            }
+        }
     }
     reader.close();
 }
@@ -249,7 +264,7 @@ int main()
                 indice++;
                 system("CLS");
                 cout << "Procedimenti: " << endl;
-                StampaProcedimento();
+                StampaProcedimento(dolceOrdinato);
                 cout << "Inserire un altro dolce? (Y/N) ";
                 cin >> exit;
                 exit = (exit | ' ') - ' ';
