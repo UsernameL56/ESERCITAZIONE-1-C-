@@ -36,7 +36,6 @@ static int Ricerca(string nome, string filePath)
 
 static void AggiuntaMenu(int &dim, string path)
 {
-    
     fstream file;
     int q;
     prodotto p;
@@ -146,7 +145,7 @@ static void StampaProcedimento(string dolceOrdinato)
         system("CLS");
         readering.close();
         cout << "Procedimento:" << endl << endl;
-        reader.open("RicetteOrdine.csv", ios::in);
+        reader.open("ricpath", ios::in);
         while (getline(reader, line))
         {
             if (line.find(dolceOrdinato) != string::npos)
@@ -166,6 +165,32 @@ static void StampaProcedimento(string dolceOrdinato)
         }
         _getch();
         reader.close();
+    }
+}
+static void EliminaDolce(string dolceSelezionato)
+{
+    string nome_file = "Ingredienti Temp.txt", nome_file_mod = "Ingredienti TempTEMP.txt", line;
+    ifstream input(nome_file);
+    ofstream output(nome_file_mod);
+    int p = Ricerca(dolceSelezionato, nome_file);
+    if (p == -1) {
+        cout << "Errore! Dolce non trovato!" << endl;
+    }
+    else {
+        input.open(nome_file, ios::in);
+        while (getline(input, line))
+        {
+            if (line.find(dolceSelezionato) != string::npos)
+            {
+
+            }
+        }
+        input.close();
+        output.close();
+        // Sostituisci il file originale con quello temporaneo
+        //remove(nome_file.c_str());
+        //rename(nome_file_mod.c_str(), nome_file.c_str());
+        cout << "Dolce eliminato con successo!" << endl;
     }
 }
 
@@ -216,7 +241,6 @@ void GeneraDispensa()
 
 int main()
 {
-    
     prodotto p;
     int scelta, dim = 0, indice = 1;
     char sceltagg;
@@ -225,7 +249,7 @@ int main()
     fstream ricetteOrdini, ordini, ricavazione;
     do {
         system("CLS");
-        cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Ricerca ricetta\n5 - Modifica dolce\n0 - Uscita\n" << endl;
+        cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Modifica dolce\n0 - Uscita\n" << endl;
         cout << "Inserire la scelta: ";
         cin >> scelta;
         switch (scelta) {
@@ -271,6 +295,12 @@ int main()
             } while (exit == true);
             break;
         case 3:
+            system("CLS");
+            cout << "Inserire il dolce che si desidera eliminare: ";
+            cin >> dolceOrdinato;
+            EliminaDolce(dolceOrdinato);
+            break;
+        case 4:
             break;
         }
         cout << "Premere un tasto per continuare...";
