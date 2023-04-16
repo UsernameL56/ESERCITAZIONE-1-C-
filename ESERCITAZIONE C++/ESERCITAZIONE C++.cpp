@@ -145,7 +145,7 @@ static void StampaProcedimento(string dolceOrdinato)
         system("CLS");
         readering.close();
         cout << "Procedimento:" << endl << endl;
-        reader.open("ricpath", ios::in);
+        reader.open(ricpath, ios::in);
         while (getline(reader, line))
         {
             if (line.find(dolceOrdinato) != string::npos)
@@ -167,6 +167,8 @@ static void StampaProcedimento(string dolceOrdinato)
         reader.close();
     }
 }
+/*
+* FUNZIONE THOMAS CHE NON VOGLIO DISTRUGGERE
 static void EliminaDolce(string dolceSelezionato)
 {
     string nome_file = "Ingredienti Temp.txt", nome_file_mod = "Ingredienti TempTEMP.txt", line;
@@ -192,6 +194,40 @@ static void EliminaDolce(string dolceSelezionato)
         //rename(nome_file_mod.c_str(), nome_file.c_str());
         cout << "Dolce eliminato con successo!" << endl;
     }
+}
+*/
+
+static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_file_mod)
+{
+    string nome_file = "ListaDolci.csv", line;
+    fstream input;
+    int p = Ricerca(dolceSelezionato, nome_file);
+    if (p == -1) {
+        cout << "Errore! Dolce non trovato!" << endl;
+    }
+    else {
+        input.open(nome_file, ios::in);
+        while (getline(input, line))
+        {
+            string split = line.substr(0, line.find(";"));
+            if (split != dolceSelezionato)
+            {
+                output << line << endl;
+            }
+        }
+        input.close();
+        // Sostituisci il file originale con quello temporaneo
+
+
+    }
+}
+
+static void Sostituzione(string appoggio, string vecchio) {
+    remove(vecchio.c_str());
+    if (rename(appoggio.c_str(), vecchio.c_str()) == 0)
+        cout << "File renamed successfully";
+    else
+        perror("Error renaming file");
 }
 
 /*
@@ -243,10 +279,11 @@ int main()
 {
     prodotto p;
     int scelta, dim = 0, indice = 1;
+    int r;
     char sceltagg;
     bool exit, c = false;
-    string path = "ListaDolci.csv", ord = "RicetteOrdine.csv", dolceOrdinato;
-    fstream ricetteOrdini, ordini, ricavazione;
+    string path = "ListaDolci.csv", ord = "RicetteOrdine.csv", nome_file_mod = "Ingredienti TempTEMP.csv", dolceOrdinato;
+    fstream ricetteOrdini, ordini, ricavazione, output;
     do {
         system("CLS");
         cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Modifica dolce\n0 - Uscita\n" << endl;
@@ -254,7 +291,7 @@ int main()
         cin >> scelta;
         switch (scelta) {
         default:
-            cout << "Opzione non valida!"<<endl;
+            cout << "Opzione non valida!" << endl;
             break;
         case 0:
             c = true;
@@ -277,6 +314,7 @@ int main()
                 indice++;
                 system("CLS");
                 StampaProcedimento(dolceOrdinato);
+                system("CLS");
                 cout << "Inserire un altro dolce? (Y/N) ";
                 cin >> sceltagg;
                 sceltagg = (sceltagg | ' ') - ' ';
@@ -298,12 +336,27 @@ int main()
             system("CLS");
             cout << "Inserire il dolce che si desidera eliminare: ";
             cin >> dolceOrdinato;
-            EliminaDolce(dolceOrdinato);
+            r = Ricerca(dolceOrdinato, "Ingredienti.csv");
+            if (r == -1) {
+                cout << "Dolce non trovato!" << endl;
+                cout << "Premere un tasto per continuare...";
+                _getch();
+            }
+            else {
+                output.open(nome_file_mod, ios::out);
+                EliminaDolce(dolceOrdinato, output, nome_file_mod);
+                output.close();
+                Sostituzione(nome_file_mod, path);
+                cout << "Premere un tasto per continuare...";
+                _getch();
+            }
+            
+            
             break;
         case 4:
             break;
-        }
-        cout << "Premere un tasto per continuare...";
-        _getch();
+            cout << "Premere un tasto per continuare...";
+            _getch();
+        } 
     } while (!c);
 }
