@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
+//#include <stdlib.h>
+#include <cstdlib>
 #include <string>
 #include <conio.h>
 
@@ -9,6 +10,7 @@ struct prodotto
 {
     string dolce;
     string ingrediente[100];
+    int indice = 0;
     int quantità[100];
 };
 
@@ -51,8 +53,6 @@ static void AggiuntaMenu(int &dim, string path)
             cin >> p.ingrediente[i - 1];
             cout << "Inserire la quantita di quell'ingrediente: ";
             cin >> p.quantità[i - 1];
-            
-           
         }
         dispensa.open("Dispensa.csv", ios::out | ios::app);
         for (int i = 1; i <= q; i++)
@@ -102,6 +102,7 @@ static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
     }
     
 }
+
 static void RicavaMenu() {
     string line;
     string sep = ";";
@@ -119,54 +120,48 @@ static void StampaProcedimento(string dolceOrdinato)
 {
     string line, sep = ";", ingpath = "Ingredienti.csv", ricpath = "RicetteOrdine.csv";
     fstream reader, readering;
-    int p = Ricerca(dolceOrdinato, ingpath);
-    if (p == -1) {
-        cout << "Errore! Dolce non trovato!" << endl;
-    }
-    else
+    cout << "Ingredienti:" << endl << endl;
+    readering.open(ingpath, ios::in);
+    while (getline(readering, line))
     {
-        cout << "Ingredienti:" << endl << endl;
-        readering.open(ingpath, ios::in);
-        while (getline(readering, line))
+        if (line.find(dolceOrdinato) != string::npos)
         {
-            if (line.find(dolceOrdinato) != string::npos)
+            int inizio = line.find(";"); // Trova il primo carattere ";" nella riga
+            while (inizio != string::npos)
             {
-                int inizio = line.find(";"); // Trova il primo carattere ";" nella riga
-                while (inizio != string::npos)
-                {
-                    int fine = line.find(";", inizio + 1); // Trova il prossimo carattere ";" nella riga
-                    string sottostringa = line.substr(inizio + 1, fine - inizio - 1); // Estrae la sottostringa tra i due caratteri ";"
-                    cout << sottostringa << endl;
-                    inizio = fine;
-                }
+                int fine = line.find(";", inizio + 1); // Trova il prossimo carattere ";" nella riga
+                string sottostringa = line.substr(inizio + 1, fine - inizio - 1); // Estrae la sottostringa tra i due caratteri ";"
+                cout << sottostringa << endl;
+                inizio = fine;
             }
         }
-        _getch();
-        system("CLS");
-        readering.close();
-        cout << "Procedimento:" << endl << endl;
-        reader.open(ricpath, ios::in);
-        while (getline(reader, line))
-        {
-            if (line.find(dolceOrdinato) != string::npos)
-            {
-
-                while (getline(reader, line))
-                {
-                    if (line.find(";") != string::npos) {
-                        cout << line << endl;
-                        break;
-                    }
-                    else {
-                        cout << line << endl;
-                    }
-                }
-            }
-        }
-        _getch();
-        reader.close();
     }
+    _getch();
+    system("CLS");
+    readering.close();
+    cout << "Procedimento:" << endl << endl;
+    reader.open(ricpath, ios::in);
+    while (getline(reader, line))
+    {
+        if (line.find(dolceOrdinato) != string::npos)
+        {
+
+            while (getline(reader, line))
+            {
+                if (line.find(";") != string::npos) {
+                    cout << line << endl;
+                    break;
+                }
+                else {
+                    cout << line << endl;
+                }
+            }
+        }
+    }
+    _getch();
+    reader.close();
 }
+
 /*
 * FUNZIONE THOMAS CHE NON VOGLIO DISTRUGGERE
 static void EliminaDolce(string dolceSelezionato)
@@ -201,25 +196,39 @@ static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_f
 {
     string nome_file = "ListaDolci.csv", line;
     fstream input;
-    int p = Ricerca(dolceSelezionato, nome_file);
-    if (p == -1) {
-        cout << "Errore! Dolce non trovato!" << endl;
-    }
-    else {
-        input.open(nome_file, ios::in);
-        while (getline(input, line))
+    input.open(nome_file, ios::in);
+    while (getline(input, line))
+    {
+        string split = line.substr(0, line.find(";"));
+        if (split != dolceSelezionato)
         {
-            string split = line.substr(0, line.find(";"));
-            if (split != dolceSelezionato)
-            {
-                output << line << endl;
-            }
+            output << line << endl;
         }
-        input.close();
-        // Sostituisci il file originale con quello temporaneo
-
-
     }
+    input.close();
+}
+
+static void ModificaDolce(string dolceSelezionato, string nuovoDolce, fstream& output, string nome_file_mod)
+{
+    string nome_file = "ListaDolci.csv", line;
+    fstream input;
+    int indice = 1;
+    prodotto p;
+    input.open(nome_file, ios::in);
+    while (getline(input, line))
+    {
+        string split = line.substr(0, line.find(";"));
+        if (split != dolceSelezionato)
+        {
+            output << line << endl;
+        }
+        else {
+            output << nuovoDolce;
+            string split2 = line.substr(split.length());
+            output << split2 << endl;
+        }
+    }
+    input.close();
 }
 
 static void Sostituzione(string appoggio, string vecchio) {
@@ -280,9 +289,9 @@ int main()
     prodotto p;
     int scelta, dim = 0, indice = 1;
     int r;
-    char sceltagg;
+    char uscita;
     bool exit, c = false;
-    string path = "ListaDolci.csv", ord = "RicetteOrdine.csv", nome_file_mod = "Ingredienti TempTEMP.csv", dolceOrdinato;
+    string path = "ListaDolci.csv", ord = "RicetteOrdine.csv", nome_file_mod = "Ingredienti TempTEMP.csv", dolceOrdinato, nuovoDolce;
     fstream ricetteOrdini, ordini, ricavazione, output;
     do {
         system("CLS");
@@ -308,15 +317,32 @@ int main()
                 RicavaMenu();
                 cout << "Inserire il dolce che si vuole ordinare: ";
                 cin >> dolceOrdinato;
-                ricetteOrdini.open(ord, ios::out | ios::app);
-                Ordinazione(dolceOrdinato, ricetteOrdini);
-                ricetteOrdini.close();
-                indice++;
-                system("CLS");
-                StampaProcedimento(dolceOrdinato);
+                dolceOrdinato[0] = toupper(dolceOrdinato[0]);
+                r = Ricerca(dolceOrdinato, "Ingredienti.csv");
+                if (r == -1) {
+                    cout << "Dolce non trovato!" << endl;
+                    cout << "Premere un tasto per continuare...";
+                    _getch();
+                }
+                else {
+                    ricetteOrdini.open(ord, ios::out | ios::app);
+                    Ordinazione(dolceOrdinato, ricetteOrdini);
+                    ricetteOrdini.close();
+                    indice++;
+                    system("CLS");
+                    StampaProcedimento(dolceOrdinato);
+                }
                 system("CLS");
                 cout << "Inserire un altro dolce? (Y/N) ";
-                cin >> sceltagg;
+                cin >> uscita;
+                uscita = toupper(uscita);
+                while (uscita != 'Y' && uscita != 'N') {
+                    system("CLS");
+                    cout << "Inserire un altro dolce? (Y/N)" << endl << "Inserire come input 'Y' o 'N'" << endl;
+                    cin >> uscita;
+                    uscita = toupper(uscita);
+                }
+                /*cin >> sceltagg;
                 sceltagg = (sceltagg | ' ') - ' ';
                 switch (sceltagg) {
                 default:
@@ -329,13 +355,15 @@ int main()
                 case 'N':
                     exit = false;
                     break;
-                }
-            } while (exit == true);
+                }*/
+            } while (uscita != 'N');
             break;
         case 3:
             system("CLS");
+            RicavaMenu();
             cout << "Inserire il dolce che si desidera eliminare: ";
             cin >> dolceOrdinato;
+            dolceOrdinato[0] = toupper(dolceOrdinato[0]);
             r = Ricerca(dolceOrdinato, "Ingredienti.csv");
             if (r == -1) {
                 cout << "Dolce non trovato!" << endl;
@@ -350,13 +378,33 @@ int main()
                 cout << "Premere un tasto per continuare...";
                 _getch();
             }
-            
-            
             break;
         case 4:
+            system("CLS");
+            RicavaMenu();
+            cout << "Inserire il dolce che si desidera modificare: ";
+            cin >> dolceOrdinato;
+            dolceOrdinato[0] = toupper(dolceOrdinato[0]);
+            r = Ricerca(dolceOrdinato, "Ingredienti.csv");
+            if (r == -1) {
+                cout << "Dolce non trovato!" << endl;
+                cout << "Premere un tasto per continuare...";
+                _getch();
+            }
+            else {
+                cout << "Inserire il nuovo dolce: ";
+                cin >> nuovoDolce;
+                nuovoDolce[0] = toupper(nuovoDolce[0]);
+                output.open(nome_file_mod, ios::out);
+                ModificaDolce(dolceOrdinato, nuovoDolce, output, nome_file_mod);
+                output.close();
+                Sostituzione(nome_file_mod, path);
+                cout << "Premere un tasto per continuare...";
+                _getch();
+            }
             break;
             cout << "Premere un tasto per continuare...";
             _getch();
-        } 
+        }
     } while (!c);
 }
