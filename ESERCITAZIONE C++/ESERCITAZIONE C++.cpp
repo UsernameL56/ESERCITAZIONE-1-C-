@@ -39,6 +39,7 @@ static int Ricerca(string nome, string filePath)
 static void AggiuntaMenu(int &dim, string path)
 {
     fstream file;
+    string line;
     int q;
     prodotto p;
     fstream dispensa;
@@ -57,8 +58,15 @@ static void AggiuntaMenu(int &dim, string path)
         dispensa.open("Dispensa.csv", ios::out | ios::app);
         for (int i = 1; i <= q; i++)
         {
+            /*
+            while (getline(dispensa, line)) {
+                string split = line.substr(0, line.find(";"));
+                if(split != p.ingrediente[i - 1])
+                    
+            }*/
             dispensa << p.ingrediente[i - 1] << ";" << "..." << endl;
         }
+        dispensa.close();
 
         file.open(path, ios::out | ios::app);
         file << p.dolce;
