@@ -13,7 +13,6 @@ struct prodotto
     int indice = 0;
     int quantità[100];
 };
-
 #pragma region Funzioni
 static int Ricerca(string nome, string filePath)
 {
@@ -35,7 +34,6 @@ static int Ricerca(string nome, string filePath)
     file.close();
     return posizione;
 }
-
 static bool AggiuntaDispensa(string ingrediente, fstream& dispensa) {
     fstream reader;
     reader.open("Dispensa.csv", ios::in);
@@ -54,8 +52,7 @@ static bool AggiuntaDispensa(string ingrediente, fstream& dispensa) {
     reader.close();
     return controllo;
 }
-
-static void AggiuntaMenu(int &dim, string path)
+static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
 {
     fstream file;
     string line;
@@ -63,49 +60,54 @@ static void AggiuntaMenu(int &dim, string path)
     int q;
     prodotto p;
     fstream dispensa, reader;
-    if (dim < 100)
+    int r = Ricerca(dolceOrdinato, path);
+    if (r == -1)
     {
-        cout << "Inserire il dolce: ";
-        cin >> p.dolce;
-        cout << "Inserire il numero di ingredienti necessari: ";
-        cin >> q;
-        
-        for (int i = 1; i <= q; i++) {
-            cout << "Inserire l'ingrediente " << i << ": ";
-            cin >> p.ingrediente[i - 1];
-            cout << "Inserire la quantita di quell'ingrediente: ";
-            cin >> p.quantità[i - 1];
-        }
-        dispensa.open("Dispensa.csv", ios::out | ios::app);
-        for (int i = 1; i <= q; i++)
-        {/*
-         
-            controllo = AggiuntaDispensa(p.ingrediente[i - 1], dispensa);
-            
-            if (controllo == true) {}
-         */
-            
-                dispensa << p.ingrediente[i - 1] << ";" << "..." << endl;
-        }
-        dispensa.close();
-        
-
-        file.open(path, ios::out | ios::app);
-        file << p.dolce;
-        for (int i = 1; i <= q; i++)
+        if (dim < 100)
         {
-            file << ";" << p.ingrediente[i - 1] << " " << p.quantità[i - 1];
-        }
-        file << endl;
-        file.close();
+            p.dolce = dolceOrdinato;
+            cout << "Inserire il numero di ingredienti necessari: ";
+            cin >> q;
 
-        dim++;
+            for (int i = 1; i <= q; i++) {
+                cout << "Inserire l'ingrediente " << i << ": ";
+                cin >> p.ingrediente[i - 1];
+                cout << "Inserire la quantita di quell'ingrediente: ";
+                cin >> p.quantità[i - 1];
+            }
+            dispensa.open("Dispensa.csv", ios::out | ios::app);
+            for (int i = 1; i <= q; i++)
+            {/*
+
+                controllo = AggiuntaDispensa(p.ingrediente[i - 1], dispensa);
+
+                if (controllo == true) {}
+             */
+
+                dispensa << p.ingrediente[i - 1] << ";" << "..." << endl;
+            }
+            dispensa.close();
+
+
+            file.open(path, ios::out | ios::app);
+            file << p.dolce;
+            for (int i = 1; i <= q; i++)
+            {
+                file << ";" << p.ingrediente[i - 1] << " " << p.quantità[i - 1];
+            }
+            file << endl;
+            file.close();
+
+            dim++;
+        }
+        else {
+            cout << "Errore! Limite massimo raggiunto" << endl;
+        }
     }
     else {
-        cout << "Errore! Limite massimo raggiunto" << endl;
+        cout << "Dolce gia presente!" << endl;
     }
 }
-
 static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
 {
     string line;
@@ -132,7 +134,6 @@ static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
     }
     
 }
-
 static void RicavaMenu() {
     string line;
     string sep = ";";
@@ -145,7 +146,6 @@ static void RicavaMenu() {
     }
     reader.close();
 }
-
 static void StampaProcedimento(string dolceOrdinato) 
 {
     string line, sep = ";", ingpath = "Ingredienti.csv", ricpath = "RicetteOrdine.csv";
@@ -191,37 +191,6 @@ static void StampaProcedimento(string dolceOrdinato)
     _getch();
     reader.close();
 }
-
-/*
-* FUNZIONE THOMAS CHE NON VOGLIO DISTRUGGERE
-static void EliminaDolce(string dolceSelezionato)
-{
-    string nome_file = "Ingredienti Temp.txt", nome_file_mod = "Ingredienti TempTEMP.txt", line;
-    ifstream input(nome_file);
-    ofstream output(nome_file_mod);
-    int p = Ricerca(dolceSelezionato, nome_file);
-    if (p == -1) {
-        cout << "Errore! Dolce non trovato!" << endl;
-    }
-    else {
-        input.open(nome_file, ios::in);
-        while (getline(input, line))
-        {
-            if (line.find(dolceSelezionato) != string::npos)
-            {
-
-            }
-        }
-        input.close();
-        output.close();
-        // Sostituisci il file originale con quello temporaneo
-        //remove(nome_file.c_str());
-        //rename(nome_file_mod.c_str(), nome_file.c_str());
-        cout << "Dolce eliminato con successo!" << endl;
-    }
-}
-*/
-
 static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_file_mod)
 {
     string nome_file = "ListaDolci.csv", line;
@@ -237,7 +206,6 @@ static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_f
     }
     input.close();
 }
-
 static void ModificaDolce(string dolceSelezionato, string nuovoDolce, fstream& output, string nome_file_mod)
 {
     string nome_file = "ListaDolci.csv", line;
@@ -260,15 +228,13 @@ static void ModificaDolce(string dolceSelezionato, string nuovoDolce, fstream& o
     }
     input.close();
 }
-
 static void Sostituzione(string appoggio, string vecchio) {
     remove(vecchio.c_str());
     if (rename(appoggio.c_str(), vecchio.c_str()) == 0)
-        cout << "File renamed successfully";
+        cout << "File renamed successfully" << endl;
     else
         perror("Error renaming file");
 }
-
 /*
 void GeneraDispensa()
 {
@@ -313,14 +279,12 @@ void GeneraDispensa()
 */
 #pragma endregion
 
-
 int main()
 {
     prodotto p;
-    int scelta, dim = 0, indice = 1;
-    int r;
+    int scelta, dim = 0, indice = 1, r;
     char uscita;
-    bool exit, c = false;
+    bool c = false;
     string path = "ListaDolci.csv", ord = "RicetteOrdine.csv", nome_file_mod = "Ingredienti TempTEMP.csv", dolceOrdinato, nuovoDolce;
     fstream ricetteOrdini, ordini, ricavazione, output;
     do {
@@ -337,7 +301,12 @@ int main()
             break;
         case 1:
             system("CLS");
-            AggiuntaMenu(dim, path);
+            cout << "Inserire il dolce: ";
+            cin >> dolceOrdinato;
+            dolceOrdinato[0] = toupper(dolceOrdinato[0]);
+            AggiuntaMenu(dolceOrdinato, dim, path);
+            cout << "Premere un tasto per continuare...";
+            _getch();
             break;
         case 2:
             remove("RicetteOrdine.csv");
