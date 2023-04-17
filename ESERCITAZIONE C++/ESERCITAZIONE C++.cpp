@@ -305,8 +305,6 @@ int main()
             cin >> dolceOrdinato;
             dolceOrdinato[0] = toupper(dolceOrdinato[0]);
             AggiuntaMenu(dolceOrdinato, dim, path);
-            cout << "Premere un tasto per continuare...";
-            _getch();
             break;
         case 2:
             remove("RicetteOrdine.csv");
