@@ -318,8 +318,6 @@ int main()
                 r = Ricerca(dolceOrdinato, "Ingredienti.csv");
                 if (r == -1) {
                     cout << "Dolce non trovato!" << endl;
-                    cout << "Premere un tasto per continuare...";
-                    _getch();
                 }
                 else {
                     ricetteOrdini.open(ord, ios::out | ios::app);
@@ -364,16 +362,12 @@ int main()
             r = Ricerca(dolceOrdinato, "Ingredienti.csv");
             if (r == -1) {
                 cout << "Dolce non trovato!" << endl;
-                cout << "Premere un tasto per continuare...";
-                _getch();
             }
             else {
                 output.open(nome_file_mod, ios::out);
                 EliminaDolce(dolceOrdinato, output, nome_file_mod);
                 output.close();
                 Sostituzione(nome_file_mod, path);
-                cout << "Premere un tasto per continuare...";
-                _getch();
             }
             break;
         case 4:
@@ -385,8 +379,6 @@ int main()
             r = Ricerca(dolceOrdinato, "Ingredienti.csv");
             if (r == -1) {
                 cout << "Dolce non trovato!" << endl;
-                cout << "Premere un tasto per continuare...";
-                _getch();
             }
             else {
                 cout << "Inserire il nuovo dolce: ";
@@ -396,12 +388,10 @@ int main()
                 ModificaDolce(dolceOrdinato, nuovoDolce, output, nome_file_mod);
                 output.close();
                 Sostituzione(nome_file_mod, path);
-                cout << "Premere un tasto per continuare...";
-                _getch();
             }
             break;
-            cout << "Premere un tasto per continuare...";
-            _getch();
         }
+        cout << "Premere un tasto per continuare...";
+        _getch();
     } while (!c);
 }
