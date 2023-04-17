@@ -77,12 +77,7 @@ static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
             }
             dispensa.open("Dispensa.csv", ios::out | ios::app);
             for (int i = 1; i <= q; i++)
-            {/*
-
-                controllo = AggiuntaDispensa(p.ingrediente[i - 1], dispensa);
-
-                if (controllo == true) {}
-             */
+            {
 
                 dispensa << p.ingrediente[i - 1] << ";" << "..." << endl;
             }
@@ -195,6 +190,9 @@ static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_f
 {
     string nome_file = "ListaDolci.csv", line;
     fstream input;
+    string nome_file2 = "RicettarioGenerale.csv";
+    fstream input2, output2;
+    string ricettarioMom = "RicettarioMomentaneo.csv";
     input.open(nome_file, ios::in);
     while (getline(input, line))
     {
@@ -205,6 +203,33 @@ static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_f
         }
     }
     input.close();
+    
+    output2.open(ricettarioMom, ios::out);
+    input2.open(nome_file2, ios::in);
+    while (getline(input2, line))
+    {
+        if (line.find(dolceSelezionato) != string::npos)
+        {
+            int inizio = line.find("1."); // Trova il primo carattere ";" nella riga
+            while (inizio != string::npos)
+            {
+                int fine = line.find(";", inizio + 1); // Trova il prossimo carattere ";" nella riga
+                string sottostringa = line.substr(inizio + 1, fine - inizio - 1); // Estrae la sottostringa tra i due caratteri ";"
+                inizio = fine;
+                while (getline(input, line))
+                {
+                    line.replace(line.find(dolceSelezionato), line.length(), "");
+                    output2 << line << endl;
+
+                }
+            }
+        }
+        else {
+            output2 << line << endl;
+        }
+    }
+    input2.close();
+    output2.close();
 }
 static void ModificaDolce(string dolceSelezionato, string nuovoDolce, fstream& output, string nome_file_mod)
 {
