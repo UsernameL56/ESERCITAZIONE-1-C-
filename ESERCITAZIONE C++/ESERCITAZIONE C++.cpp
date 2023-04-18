@@ -58,7 +58,7 @@ static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
     fstream file, dispensa, reader, prc;
     string line;
     bool controllo;
-    int q, pr;
+    int q, pr, um;
     prodotto p;
     int r = Ricerca(dolceOrdinato, path);
     if (r == -1)
@@ -85,10 +85,26 @@ static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
 
 
             file.open(path, ios::out | ios::app);
-            file << p.dolce;
+            file << p.dolce << ";";
             for (int i = 1; i <= q; i++)
             {
-                file << ";" << p.ingrediente[i - 1] << " " << p.quantità[i - 1];
+                cout << "Seleziona l'unita di misura del" << i << "ingrediente(0 - no unita misura / 1 - g / 2 - ml: ";
+                cin >> um;
+                switch (um)
+                {
+                default:
+                    cout << "Input non valido!";
+                    break;
+                case 0:
+                    file << p.ingrediente[i - 1] << " " << p.quantità[i - 1] << ";";
+                    break;
+                case 1:
+                    file << p.ingrediente[i - 1] << " " << p.quantità[i - 1] << " g;";
+                    break;
+                case 2:
+                    file << p.ingrediente[i - 1] << " " << p.quantità[i - 1] << " ml;";
+                    break;
+                }
             }
             file << endl;
             file.close();
