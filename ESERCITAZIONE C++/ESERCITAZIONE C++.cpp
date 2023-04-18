@@ -34,8 +34,9 @@ static int Ricerca(string nome, string filePath)
     file.close();
     return posizione;
 }
-static bool AggiuntaDispensa(string ingrediente, fstream& dispensa) 
+static bool AggiuntaDispensa(string ingrediente)
 {
+    fstream dispensa;
     fstream reader;
     reader.open("Dispensa.csv", ios::in);
     string line;
@@ -72,24 +73,18 @@ static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
             for (int i = 1; i <= q; i++) {
                 cout << "Inserire l'ingrediente " << i << ": ";
                 cin >> p.ingrediente[i - 1];
+                AggiuntaDispensa(p.ingrediente[i-1]);
                 cout << "Inserire la quantita di quell'ingrediente: ";
                 cin >> p.quantità[i - 1];
             }
-            dispensa.open("Dispensa.csv", ios::out | ios::app);
-            for (int i = 1; i <= q; i++)
-            {
-
-                dispensa << p.ingrediente[i - 1] << ";" << "..." << endl;
-            }
-            dispensa.close();
-
-
             file.open(path, ios::out | ios::app);
             file << p.dolce << ";";
             for (int i = 1; i <= q; i++)
             {
                 cout << "Seleziona l'unita di misura del" << i << "ingrediente(0 - no unita misura / 1 - g / 2 - ml: ";
                 cin >> um;
+                dispensa.open("Dispensa.csv", ios::out | ios::app);
+                dispensa << p.ingrediente[i - 1] << ";" << um << endl;
                 switch (um)
                 {
                 default:
@@ -107,6 +102,7 @@ static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
                 }
             }
             file << endl;
+            dispensa.close();
             file.close();
 
             cout << "Inserire il numero di procedimenti necessari: ";
@@ -167,6 +163,18 @@ static void RicavaMenu() {
     {
         string split = line.substr(0, line.find(sep));
         cout << "- " << split << endl;
+    }
+    reader.close();
+}
+static void RicavaIngredienti()
+{
+    string line, sep = ";";
+    fstream reader;
+    reader.open("Ingredienti.csv", ios::in);
+    while (getline(reader, line))
+    {
+        string split = line.substr(line.find(sep)); //modificare il punto di ricerca (variabile)
+        cout << split << endl;
     }
     reader.close();
 }
@@ -286,12 +294,17 @@ static void Sostituzione(string appoggio, string vecchio) {
     else
         perror("Error renaming file");
 }
-/*
-void GeneraDispensa()
-{
+
+static void GeneraDispensa(int& um, int& q)
+{   
     fstream sr;
     sr.open("", ios::out);
     srand(time(NULL));
+    for (int i = 1; i <= q; i++)
+    {
+        sr << "" << endl;
+    }
+    /*
     //generazione degli elementi
     sr << "uova: " << rand() % 10 << " pezzi" << endl;
     sr << "farina: " << rand() % 2500 << "g" << endl;
@@ -326,8 +339,8 @@ void GeneraDispensa()
     sr << "zucchero a velo: " << rand() % 100 << "g" << endl;
     sr << "cialda: " << rand() % 10 << " pezzi" << endl;
     sr.close();
-}
 */
+}
 #pragma endregion
 
 int main()
@@ -336,11 +349,12 @@ int main()
     int scelta, dim = 0, indice = 1, r;
     char uscita;
     bool c = false;
-    string path = "ListaDolci.csv", ord = "RicetteOrdine.csv", nome_file_mod = "Ingredienti TempTEMP.csv", dolceOrdinato, nuovoDolce;
+    string path = "ListaDolci.csv", ord = "RicetteOrdine.csv", nome_file_mod = "Ingredienti TempTEMP.csv", dis = "Dispensa.csv", dolceOrdinato, nuovoDolce;
     fstream ricetteOrdini, ordini, ricavazione, output;
     do {
         system("CLS");
-        cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Modifica dolce\n0 - Uscita\n" << endl;
+        //genera dispensa()
+        cout << "1 - Aggiunta dolce\n2 - Ordinazione\n3 - Elimina dolce\n4 - Modifica dolce\n5 - Visualizza Dispensa\n0 - Uscita\n" << endl;
         cout << "Inserire la scelta: ";
         cin >> scelta;
         switch (scelta) {
@@ -428,6 +442,11 @@ int main()
                 Sostituzione(nome_file_mod, path);
             }
             break;
+        case 5:
+            system("CLS");
+            cout << "Elementi presenti in dispensa: ";
+            output.open(dis, ios::out);
+            
         }
         cout << "Premere un tasto per continuare...";
         _getch();
