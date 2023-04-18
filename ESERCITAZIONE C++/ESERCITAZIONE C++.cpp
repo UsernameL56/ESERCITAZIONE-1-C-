@@ -97,7 +97,7 @@ static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
             cin >> pr;
             for (int i = 1; i <= pr; i++) 
             {
-                cout << "Inserire il " << i <<" passaggio: ";
+                cout << "Inserire il " << i << " passaggio: ";
                 cin >> p.procedimento[i - 1];
             }
             prc.open("RicettarioMomentaneo.csv", ios::out | ios::app);
@@ -130,7 +130,7 @@ static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
             while (getline(reader, line))
             {
                 if (line.find(";") != string::npos) {
-                    ricetteOrdini << line << endl << endl;
+                    ricetteOrdini << line << endl;
                     ricetteOrdini << endl;
                     reader.close();
                     break;
@@ -225,8 +225,8 @@ static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_f
 }
 static void ModificaDolce(string dolceSelezionato, string nuovoDolce, fstream& output, string nome_file_mod)
 {
-    string nome_file = "ListaDolci.csv", line;
-    fstream input;
+    string nome_file = "ListaDolci.csv", line, rcg = "RicettarioGenerale.csv", nome_file_mod2 = "RicettarioMomentaneo.csv";
+    fstream input, input2, output2;
     int indice = 1;
     prodotto p;
     input.open(nome_file, ios::in);
@@ -244,6 +244,24 @@ static void ModificaDolce(string dolceSelezionato, string nuovoDolce, fstream& o
         }
     }
     input.close();
+
+    output2.open(nome_file_mod2, ios::out);
+    input2.open(rcg, ios::in);
+    while (getline(input2, line))
+    {
+        string split = line.substr(0, line.find(";"));
+        if (split != dolceSelezionato)
+        {
+            output2 << line << endl;
+        }
+        else {
+            output2 << nuovoDolce;
+            string split2 = line.substr(split.length());
+            output2 << split2 << endl;
+        }
+    }
+    input2.close();
+    output2.close();
 }
 static void Sostituzione(string appoggio, string vecchio) {
     remove(vecchio.c_str());
