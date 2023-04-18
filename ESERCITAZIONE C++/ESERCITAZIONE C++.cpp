@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-//#include <stdlib.h>
 #include <cstdlib>
 #include <string>
 #include <conio.h>
@@ -35,7 +34,8 @@ static int Ricerca(string nome, string filePath)
     file.close();
     return posizione;
 }
-static bool AggiuntaDispensa(string ingrediente, fstream& dispensa) {
+static bool AggiuntaDispensa(string ingrediente, fstream& dispensa) 
+{
     fstream reader;
     reader.open("Dispensa.csv", ios::in);
     string line;
@@ -101,10 +101,10 @@ static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
                 cin >> p.procedimento[i - 1];
             }
             prc.open("RicettarioMomentaneo.csv", ios::out | ios::app);
-            prc << "- " << p.dolce << " -" << endl;
+            prc << endl << p.dolce << ";";
             for (int i = 1; i <= pr; i++) 
             {
-                prc << i << ". " << p.procedimento[i - 1] << endl;
+                prc << i << ". " << p.procedimento[i - 1] << ";";
             }
             prc.close();
             dim++;
@@ -130,7 +130,7 @@ static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
             while (getline(reader, line))
             {
                 if (line.find(";") != string::npos) {
-                    ricetteOrdini << line << endl;
+                    ricetteOrdini << line << endl << endl;
                     ricetteOrdini << endl;
                     reader.close();
                     break;
@@ -144,8 +144,7 @@ static void Ordinazione(string dolceOrdinato, fstream& ricetteOrdini)
     
 }
 static void RicavaMenu() {
-    string line;
-    string sep = ";";
+    string line, sep = ";";
     fstream reader;
     reader.open("Ingredienti.csv", ios::in);
     while (getline(reader, line))
@@ -157,7 +156,7 @@ static void RicavaMenu() {
 }
 static void StampaProcedimento(string dolceOrdinato) 
 {
-    string line, sep = ";", ingpath = "Ingredienti.csv", ricpath = "RicetteOrdine.csv";
+    string line, sep = ";", ingpath = "Ingredienti.csv", ricpath = "RicettarioGenerale.csv";
     fstream reader, readering;
     cout << "Ingredienti:" << endl << endl;
     readering.open(ingpath, ios::in);
@@ -184,16 +183,13 @@ static void StampaProcedimento(string dolceOrdinato)
     {
         if (line.find(dolceOrdinato) != string::npos)
         {
-
-            while (getline(reader, line))
+            int inizio = line.find(";"); // Trova il primo carattere ";" nella riga
+            while (inizio != string::npos)
             {
-                if (line.find(";") != string::npos) {
-                    cout << line << endl;
-                    break;
-                }
-                else {
-                    cout << line << endl;
-                }
+                int fine = line.find(";", inizio + 1); // Trova il prossimo carattere ";" nella riga
+                string sottostringa = line.substr(inizio + 1, fine - inizio - 1); // Estrae la sottostringa tra i due caratteri ";"
+                cout << sottostringa << endl;
+                inizio = fine;
             }
         }
     }
@@ -202,11 +198,8 @@ static void StampaProcedimento(string dolceOrdinato)
 }
 static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_file_mod)
 {
-    string nome_file = "ListaDolci.csv", line;
-    fstream input;
-    string nome_file2 = "RicettarioGenerale.csv";
-    fstream input2, output2;
-    string ricettarioMom = "RicettarioMomentaneo.csv";
+    string nome_file = "ListaDolci.csv", line, nome_file2 = "RicettarioGenerale.csv", ricettarioMom = "RicettarioMomentaneo.csv";
+    fstream input, input2, output2;
     input.open(nome_file, ios::in);
     while (getline(input, line))
     {
@@ -217,28 +210,13 @@ static void EliminaDolce(string dolceSelezionato, fstream& output, string nome_f
         }
     }
     input.close();
-    
     output2.open(ricettarioMom, ios::out);
     input2.open(nome_file2, ios::in);
     while (getline(input2, line))
     {
-        if (line.find(dolceSelezionato) != string::npos)
+        string split = line.substr(0, line.find(";"));
+        if (split != dolceSelezionato)
         {
-            int inizio = line.find("1."); // Trova il primo carattere ";" nella riga
-            while (inizio != string::npos)
-            {
-                int fine = line.find(";", inizio + 1); // Trova il prossimo carattere ";" nella riga
-                string sottostringa = line.substr(inizio + 1, fine - inizio - 1); // Estrae la sottostringa tra i due caratteri ";"
-                inizio = fine;
-                while (getline(input, line))
-                {
-                    line.replace(line.find(dolceSelezionato), line.length(), "");
-                    output2 << line << endl;
-
-                }
-            }
-        }
-        else {
             output2 << line << endl;
         }
     }
