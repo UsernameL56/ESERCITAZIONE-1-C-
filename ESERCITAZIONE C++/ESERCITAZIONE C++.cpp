@@ -10,6 +10,7 @@ struct prodotto
 {
     string dolce;
     string ingrediente[100];
+    string procedimento[100];
     int indice = 0;
     int quantità[100];
 };
@@ -54,12 +55,11 @@ static bool AggiuntaDispensa(string ingrediente, fstream& dispensa) {
 }
 static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
 {
-    fstream file;
+    fstream file, dispensa, reader, prc;
     string line;
     bool controllo;
-    int q;
+    int q, pr;
     prodotto p;
-    fstream dispensa, reader;
     int r = Ricerca(dolceOrdinato, path);
     if (r == -1)
     {
@@ -93,6 +93,20 @@ static void AggiuntaMenu(string dolceOrdinato, int &dim, string path)
             file << endl;
             file.close();
 
+            cout << "Inserire il numero di procedimenti necessari: ";
+            cin >> pr;
+            for (int i = 1; i <= pr; i++) 
+            {
+                cout << "Inserire il " << i <<" passaggio: ";
+                cin >> p.procedimento[i - 1];
+            }
+            prc.open("RicettarioMomentaneo.csv", ios::out | ios::app);
+            prc << "- " << p.dolce << " -" << endl;
+            for (int i = 1; i <= pr; i++) 
+            {
+                prc << i << ". " << p.procedimento[i - 1] << endl;
+            }
+            prc.close();
             dim++;
         }
         else {
@@ -343,6 +357,7 @@ int main()
                 r = Ricerca(dolceOrdinato, "Ingredienti.csv");
                 if (r == -1) {
                     cout << "Dolce non trovato!" << endl;
+                    _getch();
                 }
                 else {
                     ricetteOrdini.open(ord, ios::out | ios::app);
@@ -362,20 +377,6 @@ int main()
                     cin >> uscita;
                     uscita = toupper(uscita);
                 }
-                /*cin >> sceltagg;
-                sceltagg = (sceltagg | ' ') - ' ';
-                switch (sceltagg) {
-                default:
-                    cout << "Input non valido!" << endl;
-                    exit = false;
-                    break;
-                case 'Y':
-                    exit = true;
-                    break;
-                case 'N':
-                    exit = false;
-                    break;
-                }*/
             } while (uscita != 'N');
             break;
         case 3:
